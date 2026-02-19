@@ -1,0 +1,7 @@
+在 GitHub 進入 src 資料夾。
+
+點擊 Add file -> Create new file。
+
+檔名取叫 dummy.txt，內容隨便打幾個字，然後 Commit。
+
+這會強迫 GitHub 發送一個新的信號給 Vercel。

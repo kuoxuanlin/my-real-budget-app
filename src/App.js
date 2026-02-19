@@ -1,12 +1,5 @@
-import React, { useState, useMemo } from 'react';
-import { 
-  PlusCircle, 
-  Trash2, 
-  Wallet, 
-  History,
-  Coins,
-  PencilLine
-} from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { PlusCircle, Trash2, Wallet, History, Coins, PencilLine } from 'lucide-react';
 
 const App = () => {
   // 狀態管理
@@ -17,11 +10,7 @@ const App = () => {
   const [isBalanceSet, setIsBalanceSet] = useState(() => !!localStorage.getItem('min_balance'));
   const [transactions, setTransactions] = useState([]);
   const [tempBalance, setTempBalance] = useState('');
-  
-  const [formData, setFormData] = useState({
-    amount: '',
-    note: ''
-  });
+  const [formData, setFormData] = useState({ amount: '', note: '' });
 
   // 設定初始金額
   const handleSetBalance = (e) => {
@@ -32,24 +21,20 @@ const App = () => {
     localStorage.setItem('min_balance', tempBalance);
   };
 
-  // 計算目前的餘額
   const currentBalance = useMemo(() => {
     const totalExpense = transactions.reduce((sum, t) => sum + Number(t.amount), 0);
     return initialBalance - totalExpense;
   }, [initialBalance, transactions]);
 
-  // 處理支出提交
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.amount || !formData.note) return;
-
     const newTransaction = {
       id: Date.now(),
       amount: Number(formData.amount),
       note: formData.note,
       date: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
-
     setTransactions([newTransaction, ...transactions]);
     setFormData({ amount: '', note: '' });
   };
@@ -61,29 +46,20 @@ const App = () => {
   // 如果還沒設定初始金額，顯示設定畫面
   if (!isBalanceSet) {
     return (
-      <div className="min-h-screen bg-slate-50 flex items-center justify-center p-6 font-sans">
-        <div className="w-full max-w-sm bg-white rounded-3xl p-8 shadow-xl border border-slate-100 text-center">
-          <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 text-blue-600">
+      <div style={{ minHeight: '100-vh', backgroundColor: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', fontFamily: 'sans-serif' }}>
+        <div style={{ width: '100%', maxWidth: '350px', backgroundColor: 'white', borderRadius: '24px', padding: '30px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', textAlign: 'center' }}>
+          <div style={{ backgroundColor: '#dbeafe', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', color: '#2563eb' }}>
             <Wallet size={32} />
           </div>
-          <h2 className="text-2xl font-bold mb-2">歡迎使用</h2>
-          <p className="text-slate-500 mb-8">請先輸入你目前擁有的總金額</p>
-          <form onSubmit={handleSetBalance} className="space-y-4">
+          <h2 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 0 10px' }}>歡迎使用</h2>
+          <p style={{ color: '#64748b', marginBottom: '30px' }}>請先輸入你目前擁有的總金額</p>
+          <form onSubmit={handleSetBalance}>
             <input
-              type="number"
-              inputMode="decimal"
-              placeholder="例如: 5000"
-              className="w-full bg-slate-50 border-2 border-slate-100 rounded-2xl p-4 text-center text-2xl font-bold focus:border-blue-500 focus:outline-none transition-all"
-              value={tempBalance}
-              onChange={(e) => setTempBalance(e.target.value)}
-              required
+              type="number" placeholder="例如: 5000"
+              style={{ width: '100%', padding: '15px', borderRadius: '15px', border: '2px solid #f1f5f9', textAlign: 'center', fontSize: '20px', fontWeight: 'bold', marginBottom: '15px', boxSizing: 'border-box' }}
+              value={tempBalance} onChange={(e) => setTempBalance(e.target.value)}
             />
-            <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-lg shadow-lg hover:bg-blue-700 active:scale-95 transition-all"
-            >
-              開始記帳
-            </button>
+            <button type="submit" style={{ width: '100%', backgroundColor: '#2563eb', color: 'white', padding: '15px', borderRadius: '15px', border: 'none', fontWeight: 'bold', fontSize: '18px', cursor: 'pointer' }}>開始記帳</button>
           </form>
         </div>
       </div>
@@ -91,111 +67,59 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 font-sans pb-10">
-      {/* 頂部餘額顯示 */}
-      <header className="bg-white p-6 shadow-sm border-b sticky top-0 z-10">
-        <div className="max-w-md mx-auto text-center">
-          <p className="text-slate-400 text-sm font-medium mb-1">目前剩餘錢包</p>
-          <h1 className={`text-4xl font-black transition-colors ${currentBalance < 0 ? 'text-red-500' : 'text-slate-800'}`}>
-            ${currentBalance.toLocaleString()}
-          </h1>
-          <button 
-            onClick={() => setIsBalanceSet(false)}
-            className="text-[10px] text-slate-300 mt-2 hover:text-slate-500 underline"
-          >
-            重新設定初始金額
-          </button>
-        </div>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', fontFamily: 'sans-serif', paddingBottom: '40px' }}>
+      <header style={{ backgroundColor: 'white', padding: '20px', textAlign: 'center', boxShadow: '0 1px 3px rgba(0,0,0,0.1)', sticky: 'top' }}>
+        <p style={{ color: '#94a3b8', fontSize: '14px', margin: '0' }}>目前剩餘錢包</p>
+        <h1 style={{ fontSize: '36px', fontWeight: '900', margin: '5px 0', color: currentBalance < 0 ? '#ef4444' : '#1e293b' }}>
+          ${currentBalance.toLocaleString()}
+        </h1>
+        <button onClick={() => {localStorage.removeItem('min_balance'); setIsBalanceSet(false);}} style={{ color: '#cbd5e1', fontSize: '10px', background: 'none', border: 'none', textDecoration: 'underline', cursor: 'pointer' }}>重新設定</button>
       </header>
 
-      <main className="max-w-md mx-auto p-4 space-y-6">
-        {/* 新增支出區塊 */}
-        <section className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100">
-          <h3 className="text-base font-bold mb-4 flex items-center gap-2 text-slate-700">
-            <PlusCircle size={18} className="text-red-500" />
-            新增支出紀錄
+      <main style={{ maxWidth: '400px', margin: '0 auto', padding: '20px' }}>
+        <section style={{ backgroundColor: 'white', padding: '20px', borderRadius: '24px', boxShadow: '0 2px 4px rgba(0,0,0,0.05)', marginBottom: '25px' }}>
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px', fontWeight: 'bold', marginBottom: '15px' }}>
+            <PlusCircle size={18} color="#ef4444" /> 新增支出紀錄
           </h3>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                <PencilLine size={18} />
-              </div>
-              <input
-                type="text"
-                placeholder="花了什麼？(如：午餐、珍奶)"
-                className="w-full bg-slate-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-2 focus:ring-red-400 transition-all"
-                value={formData.note}
-                onChange={(e) => setFormData({...formData, note: e.target.value})}
-                required
-              />
-            </div>
-
-            <div className="relative">
-              <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
-                <Coins size={18} />
-              </div>
-              <input
-                type="number"
-                inputMode="decimal"
-                placeholder="多少錢？"
-                style={{ appearance: 'none' }}
-                className="w-full bg-slate-50 border-none rounded-2xl py-4 pl-12 pr-4 text-sm focus:ring-2 focus:ring-red-400 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                value={formData.amount}
-                onChange={(e) => setFormData({...formData, amount: e.target.value})}
-                required
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-slate-900 text-white py-4 rounded-2xl font-bold shadow-lg active:scale-95 transition-all"
-            >
-              送出支出紀錄
-            </button>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <input
+              type="text" placeholder="花了什麼？"
+              style={{ padding: '15px', backgroundColor: '#f8fafc', border: 'none', borderRadius: '15px' }}
+              value={formData.note} onChange={(e) => setFormData({...formData, note: e.target.value})}
+            />
+            <input
+              type="number" placeholder="多少錢？"
+              style={{ padding: '15px', backgroundColor: '#f8fafc', border: 'none', borderRadius: '15px' }}
+              value={formData.amount} onChange={(e) => setFormData({...formData, amount: e.target.value})}
+            />
+            <button type="submit" style={{ padding: '15px', backgroundColor: '#0f172a', color: 'white', border: 'none', borderRadius: '15px', fontWeight: 'bold', cursor: 'pointer' }}>送出支出紀錄</button>
           </form>
         </section>
 
-        {/* 歷史列表 */}
-        <section className="space-y-3">
-          <div className="flex items-center justify-between px-2">
-            <h3 className="text-base font-bold flex items-center gap-2 text-slate-700">
-              <History size={18} />
-              支出明細
-            </h3>
-            <span className="text-xs text-slate-400">共 {transactions.length} 筆</span>
+        <section>
+          <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 10px', marginBottom: '15px' }}>
+            <h3 style={{ fontSize: '16px', fontWeight: 'bold', display: 'flex', alignItems: 'center', gap: '8px' }}><History size={18} /> 支出明細</h3>
+            <span style={{ fontSize: '12px', color: '#94a3b8' }}>共 {transactions.length} 筆</span>
           </div>
 
           {transactions.length === 0 ? (
-            <div className="bg-white/50 border-2 border-dashed border-slate-200 rounded-3xl py-12 text-center text-slate-400 text-sm">
-              還沒有任何支出喔！
-            </div>
+            <div style={{ textAlign: 'center', padding: '40px', color: '#cbd5e1', border: '2px dashed #e2e8f0', borderRadius: '24px' }}>還沒有任何支出喔！</div>
           ) : (
-            <div className="space-y-3">
-              {transactions.map((t) => (
-                <div key={t.id} className="bg-white p-4 rounded-2xl flex items-center justify-between shadow-sm border border-slate-50 group">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-red-50 text-red-500 rounded-full flex items-center justify-center font-bold text-xs">
-                      支
-                    </div>
-                    <div>
-                      <div className="font-bold text-slate-800">{t.note}</div>
-                      <div className="text-[10px] text-slate-400">{t.date}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="font-black text-red-500">
-                      -${t.amount.toLocaleString()}
-                    </span>
-                    <button 
-                      onClick={() => deleteTransaction(t.id)}
-                      className="p-2 text-slate-200 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+            transactions.map(t => (
+              <div key={t.id} style={{ backgroundColor: 'white', padding: '15px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px', boxShadow: '0 1px 2px rgba(0,0,0,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '40px', height: '40px', backgroundColor: '#fef2f2', color: '#ef4444', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '12px' }}>支</div>
+                  <div>
+                    <div style={{ fontWeight: 'bold' }}>{t.note}</div>
+                    <div style={{ fontSize: '10px', color: '#94a3b8' }}>{t.date}</div>
                   </div>
                 </div>
-              ))}
-            </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <span style={{ fontWeight: 'bold', color: '#ef4444' }}>-${t.amount.toLocaleString()}</span>
+                  <Trash2 size={16} color="#e2e8f0" cursor="pointer" onClick={() => deleteTransaction(t.id)} />
+                </div>
+              </div>
+            ))
           )}
         </section>
       </main>
